@@ -30,7 +30,6 @@ create_contact () {
 	else
         	printf "Name: $name \nEmail: $email \nPhone: $phone" >> $FILE
 	fi
-
 }
 
 remove_contact () {
