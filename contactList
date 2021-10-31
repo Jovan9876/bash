@@ -1,0 +1,85 @@
+#!/bin/bash
+
+FILE=$1
+information=$2
+
+if [[ "$FILE" == '' ]]; then
+        printf "No file provided\n\n"
+        exit 1;
+fi
+
+
+print_contact () {
+#Prints contact information nicely
+	printf "\n----------------------------------------\n"
+        while read line || [ -n "$line" ]; do
+                printf "$line\n"
+        done < $FILE
+	printf "\n----------------------------------------\n"
+}
+
+create_contact () {
+#Prompts the user about contact information
+	read -p 'Enter a name for your contact: ' name
+	read -p 'Enter an email for your contact: ' email
+	read -p 'Enter a phone number for your contact: ' phone
+	read -p 'Do you want to add another phone number? Y/N: ' prompt
+	if [[ $prompt == 'Y' ]]; then
+        	read -p 'Enter another phone number for your contact: ' phone2
+        	printf "Name: $name \nEmail: $email \nPhone: $phone \nPhone2: $phone2" >> $FILE
+	else
+        	printf "Name: $name \nEmail: $email \nPhone: $phone" >> $FILE
+	fi
+
+}
+
+remove_contact () {
+#Removes the contact (file)
+	rm $FILE
+}
+
+user_options () {
+#Asks the user what they want to do: create, remove or show a contact
+	read -p 'Would you like to create a contact Y/N? ' user_decision
+	if [[ $user_decision == 'Y' ]]; then
+		create_contact
+	else
+		printf "Exiting program\n\n"
+		exit 1;
+	fi
+}
+
+user_exists_options () {
+#If the user exists only allow the ability to show or remove the contact
+	read -p 'Would you like to (remove, show) this contact? ' user_decision
+	if [[ $user_decision == 'remove' ]]; then
+		remove_contact
+	elif [[ $user_decision == 'show' ]]; then
+		print_contact
+	else
+		printf "Exiting program\n\n"
+		exit 1;
+	fi
+}
+
+find_information () {
+#If the string provided is in the file provided display the string user was seraching for
+	if grep -q "$information" "$FILE" ; then
+  		grep -i "$information" "$FILE" | { grep -v grep || true; }
+		exit 0;
+	fi
+	printf "Information not found in contact\n\n"
+	exit 1;
+}
+
+if [[ -f $FILE ]] && [[ -n "$information" ]]; then
+#If user searches for a string make sure that a contact exists and that a search argument was provided
+	find_information
+elif [[ -f $FILE ]]; then
+#If contact exists (file) then give them ability to delete or view
+	user_exists_options
+else
+#If contact does not exist give them ability to create
+	user_options
+fi
+

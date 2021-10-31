@@ -1,0 +1,19 @@
+#!/bin/bash
+
+lineNum=1
+file=$1
+
+
+#If no argument is provided exit the program
+if [[ "$file" == '' ]]; then
+	printf "\nNo file provided\n\n"
+	exit 1;
+fi
+
+
+#While there is a line to read in the file keep looping
+#Add the line num before the line and print it, increment the line num for each line
+while read -r line; do
+	printf "$lineNum. $line\n"
+	((lineNum++))
+done < $file

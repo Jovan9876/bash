@@ -1,0 +1,6 @@
+#!/bin/bash
+
+x='Hello'
+y='World'
+printf "$x$y\n"
+

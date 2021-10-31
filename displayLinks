@@ -1,0 +1,14 @@
+#!/bin/bash
+
+link=$1
+
+
+#If no link is provided exit the program
+if [[ "$link" == '' ]]; then
+        printf "\nNo file provided\n\n"
+        exit 1;
+fi
+
+#Get the html with wget and writes it into same dir as index.html
+wget $link
+
