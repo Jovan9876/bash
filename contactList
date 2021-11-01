@@ -63,8 +63,7 @@ user_exists_options () {
 
 find_information () {
 #If the string provided is in the file provided display the string user was seraching for
-	if grep -q "$information" "$FILE" ; then
-  		grep -i "$information" "$FILE" | { grep -v grep || true; }
+	if grep -i "$information" "$FILE" ; then
 		exit 0;
 	fi
 	printf "Information not found in contact\n\n"
