@@ -1,14 +1,53 @@
 #!/bin/bash
 
-link=$1
+function usage () {
+        printf "\n./displayLinks ['-f'] ['url'] '-f' is optional to save the links to a file\n"
+	printf "./displayLinks ['url']\n\n"
+        exit 0;
+}
 
+function print_links () {
+grep -Eo "(http|https)://[a-zA-Z0-9./?=_%:-]*" temp
+}
+
+while getopts ":f:h" opt; do
+  case $opt in
+    f )
+      #wget from url and store into temp create links file grep links from temp and store into links
+      wget -q $2 -O temp
+      touch links
+      grep -Eo "(http|https)://[a-zA-Z0-9./?=_%:-]*" temp >> links
+      exit 0
+      ;;
+    h )
+      #shows usage
+      usage
+      ;;
+    \? )
+      #displays usage
+      printf "\n-$OPTARG is not an option\n"
+      usage
+      exit 1
+      ;;
+    : )
+      #displays usage
+      printf "\n-$OPTARG requires an argument\n"
+      usage
+      exit 1
+      ;;
+  esac
+done
 
 #If no link is provided exit the program
-if [[ "$link" == '' ]]; then
-        printf "\nNo file provided\n\n"
+if [[ $1 == '' ]]; then
+        printf "\nNo link provided\n\n"
         exit 1;
+#elif [[ $1 == '' ]] $$ [[ -z $2 ]]; then
+#	url=$2
+
+else
+#If -f is not provded just print the links
+	url=$1
+	wget -q $url -O temp
+	print_links
 fi
-
-#Get the html with wget and writes it into same dir as index.html
-wget $link
-

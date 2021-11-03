@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# create an array of numbers 1-5
+num=(1 2 3 4 5)
+
+# echo out the lenght of the array
+echo "${#num[@]}"
+
+# loop over the array and echo out one number (element) at a time
+for i in $num; do
+  echo "$i"
+done

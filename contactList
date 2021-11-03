@@ -3,9 +3,21 @@
 FILE=$1
 information=$2
 
+function usage () {
+#displays usage of the program
+	printf "\n./contactList ['filename'] ['search criteria']\n"
+	printf "Filename should be contact name\n"
+	printf "Search criteria searches for that criteria in the filename provided\n\n"
+	exit 0
+}
+
 if [[ "$FILE" == '' ]]; then
+#If no file is passed exit program
         printf "No file provided\n\n"
         exit 1;
+elif [[ "$FILE" == '-h' ]]; then
+#if -h is passed as first argument display usage
+	usage
 fi
 
 
@@ -14,27 +26,33 @@ print_contact () {
 	printf "\n----------------------------------------\n"
         while read line || [ -n "$line" ]; do
                 printf "$line\n"
-        done < $FILE
+        done < contacts/$FILE
 	printf "\n----------------------------------------\n"
 }
 
 create_contact () {
 #Prompts the user about contact information
+	if [ ! -d "./contacts" ]; then
+	#If contacts dir does not exist create it
+		mkdir contacts
+	fi
+	touch contacts/$FILE
 	read -p 'Enter a name for your contact: ' name
+	read -p 'Enter a address for your contact: ' address
 	read -p 'Enter an email for your contact: ' email
 	read -p 'Enter a phone number for your contact: ' phone
 	read -p 'Do you want to add another phone number? Y/N: ' prompt
 	if [[ $prompt == 'Y' ]]; then
         	read -p 'Enter another phone number for your contact: ' phone2
-        	printf "Name: $name \nEmail: $email \nPhone: $phone \nPhone2: $phone2" >> $FILE
+        	printf "Name: $name \nAddress: $address \nEmail: $email \nPhone: $phone \nPhone2: $phone2" >> contacts/$FILE
 	else
-        	printf "Name: $name \nEmail: $email \nPhone: $phone" >> $FILE
+        	printf "Name: $name \nAddress: $address \nEmail: $email \nPhone: $phone" >> contacts/$FILE
 	fi
 }
 
 remove_contact () {
 #Removes the contact (file)
-	rm $FILE
+	rm contacts/$FILE
 }
 
 user_options () {
@@ -63,18 +81,18 @@ user_exists_options () {
 
 find_information () {
 #If the string provided is in the file provided display the string user was seraching for
-	if grep -i "$information" "$FILE" ; then
+	if grep -i "$information" "contacts/$FILE" ; then
 		exit 0;
 	fi
 	printf "Information not found in contact\n\n"
 	exit 1;
 }
 
-if [[ -f $FILE ]] && [[ -n "$information" ]]; then
-#If user searches for a string make sure that a contact exists and that a search argument was provided
+if [[ -f contacts/$FILE ]] && [[ -n "$information" ]]; then
+#If user searches for a string make sure that a contact exists within the contacts dir and that a search argument was provided
 	find_information
-elif [[ -f $FILE ]]; then
-#If contact exists (file) then give them ability to delete or view
+elif [[ -f contacts/$FILE ]]; then
+#If contact exists (file) in the contacts dir then give them ability to delete or vieiw
 	user_exists_options
 else
 #If contact does not exist give them ability to create
